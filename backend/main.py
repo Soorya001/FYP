@@ -21,6 +21,8 @@ def acceptString():
     # language - lang to be converted to.
     # POST request must contain the following- { stringtoSend, ProgLanguage}
 
+    print('data received: ', stringReceived, ' language: ', language)
+
     convertedCode =  Converter.extract_keywords(stringReceived, language)  
     # This converts the input command- stringReceived, to its equivalent cpp or python code and returns it as a string.
 

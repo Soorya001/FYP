@@ -6,6 +6,8 @@ import axios from "axios";
 
 function App() {
 
+  const [code, setCode] = useState('hello world!');
+
   const { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
   });
@@ -15,15 +17,23 @@ function App() {
   }
 
   const sendString = async () => {
-    
+
     console.log('sending string');
 
-    const response = await axios.post(' http://127.0.0.1:5000//acceptString', {
-      string: {transcript},
+    const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
+      string: transcript,
       language: 'cpp'
     });
 
     console.log(response.data);
+
+    if(response.data.code != null) {
+      setCode(code + response.data.code);
+    }
+
+    else {
+      console.log("got null");
+    }
 
     resetTranscript();
   }
@@ -36,7 +46,7 @@ function App() {
       
       <div className='grid grid-cols-6 m-5 h-screen'>
         
-        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white'>hello</textarea>
+        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' value={ code || " "}/>
 
         <div className='col-span-2'>
 
