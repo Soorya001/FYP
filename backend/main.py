@@ -1,13 +1,16 @@
 import json
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import phraseToCode as Converter
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 # API to check if backend is up and running.
 @app.route("/check-backend-api")
 def members():
-    return {"members": ["member1","member2","member3","member4","member5"]}
+    return json.dumps({"members": ["member1","member2","member3","member4","member5"]})
 
 @app.route('/acceptString',methods=['POST'])
 def acceptString():
@@ -21,7 +24,7 @@ def acceptString():
     convertedCode =  Converter.extract_keywords(stringReceived, language)  
     # This converts the input command- stringReceived, to its equivalent cpp or python code and returns it as a string.
 
-    return {"code":convertedCode}    #Returns the converted Code
+    return json.dumps({"code":convertedCode})    #Returns the converted Code
 
 
 if __name__ == "__main__":
