@@ -10,7 +10,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # API to check if backend is up and running.
 @app.route("/check-backend-api")
 def members():
-    return json.dumps({"members": ["member1","member2","member3","member4","member5"]})
+    return json.dumps({"members": ["Jayasooryan","Madhava Prashath"]})
 
 @app.route('/acceptString',methods=['POST'])
 def acceptString():
