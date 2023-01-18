@@ -20,15 +20,25 @@ function App() {
 
     console.log('sending string');
 
+    var select = document.getElementById('language_picker');
+    var lang = select.options[select.selectedIndex].value;
+    console.log(lang);
+
+    if(lang == "nothing")
+    {
+      alert("please pick a language first!");
+      return;
+    }
+
     const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
       string: transcript,
-      language: 'cpp'
+      language: lang
     });
 
     console.log(response.data);
 
     if(response.data.code != null) {
-      setCode(code + response.data.code);
+      code == "hello world!" ? setCode(response.data.code) : setCode(code + response.data.code);
     }
 
     else {
@@ -42,8 +52,20 @@ function App() {
 
     <div className='h-screen w-screen'>
 
-      <div className='m-5 w-fit rounded-md p-2 text-white bg-orange-600 text-lg'> Language pick </div>
-      
+      {/* <div className='m-5 w-fit rounded-md p-2 text-white bg-orange-600 text-lg'> Language pick </div>
+       */}
+
+<div className="m-3 xl:w-96">
+    <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normaltext-white
+      bg-gray-800 bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded
+      transition ease-in-out m-0
+     focus:border-blue-600 focus:outline-none" aria-label="Default select example" id="language_picker">
+        <option selected value="nothing">Select Language</option>
+        <option value="cpp">C++</option>
+        <option value="python">Python</option>
+        <option value="java">Java</option>
+    </select>
+  </div>
       <div className='grid grid-cols-6 m-5 h-screen'>
         
         <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' value={ code || " "}/>
