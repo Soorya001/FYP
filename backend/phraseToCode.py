@@ -26,3 +26,12 @@ def extract_keywords(str,language):
         elif(language == "cpp"):
             return (cpp.for_function(varName,rangeStart,rangeEnd,stepCount))
 
+    elif ("include" in str) or ("Include" in str):              # Header Files
+        res = re.search('file (.*)', str)
+        fileName = res.group(1).strip()
+
+        if(language == "python"):
+            return (python.headerFile(fileName))
+        elif(language == "cpp"):
+            return (cpp.headerFile(fileName))
+

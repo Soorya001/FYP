@@ -6,3 +6,6 @@ def for_function(varName,start,end,step):
     else:
         return f'for({varName}={start};{varName}>={end};{varName}-={step})'
 
+
+def headerFile(fileName):
+    return f'#include<{fileName}>'

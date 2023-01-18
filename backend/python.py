@@ -6,3 +6,7 @@ def for_function(varName,start,end,step):
         return f'for {varName} in range({startNo},{endNo},{stepNo}):'
     else:
         return f'for {varName} in range({startNo},{endNo},{-stepNo}):'
+
+
+def headerFile(fileName):
+    return f'import {fileName}'
