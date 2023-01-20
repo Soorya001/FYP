@@ -10,3 +10,16 @@ def for_function(varName,start,end,step):
 
 def headerFile(fileName):
     return f'import {fileName}'
+
+def declaration(varName, dataType, varValue):
+    declarationStatement = ""
+
+    if(dataType == "boolean"):                          # Because input varValue will be in lowercase. And boolean value in python are True and False;
+        varValue = varValue.capitalize()
+
+    if(dataType == "string"):
+        declarationStatement = f'{varName} = "{varValue}"\n'
+    else:
+        declarationStatement = f'{varName} = {varValue}\n'
+
+    return declarationStatement
