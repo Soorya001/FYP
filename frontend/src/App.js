@@ -56,7 +56,7 @@ function App() {
        */}
 
 <div className="m-3 xl:w-96">
-    <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normaltext-white
+    <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normal text-white
       bg-gray-800 bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded
       transition ease-in-out m-0
      focus:border-blue-600 focus:outline-none" aria-label="Default select example" id="language_picker">

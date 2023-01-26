@@ -9,4 +9,4 @@ def for_function(varName,start,end,step):
 
 
 def headerFile(fileName):
-    return f'import {fileName}'
+    return f'import {fileName}\n'
