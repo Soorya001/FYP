@@ -35,3 +35,29 @@ def extract_keywords(str,language):
         elif(language == "cpp"):
             return (cpp.headerFile(fileName))
 
+    elif ("block" in str ) or ("Block" in str):                 # Open and close Brackets - { } - Blocks
+        if ("open" in str) or ("Open" in str):
+            return "{\n"
+        elif ("close" in str) or ("Close" in str):
+            return "}\n"
+
+    elif ("declare" in str) or ("Declare" in str):              # Declaration Statements
+        varValue=""
+        dataType=""
+        str = str.lower()
+
+        res = re.search('declare' + '(.*)' + 'variable',str)
+        dataType = res.group(1).strip()
+
+        res = re.search('variable' + '(.*)' + 'value',str)
+        varName = res.group(1).strip()
+
+        res = re.search('value (.*)',str)
+        varValue = res.group(1).strip()
+
+        print(varValue)
+
+        if( language == "python"):
+            return (python.declaration(varName, dataType, varValue))
+        elif (language == "cpp"):
+            return (cpp.declaration(varName, dataType, varValue))

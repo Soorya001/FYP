@@ -6,7 +6,6 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
 # API to check if backend is up and running.
 @app.route("/check-backend-api")
 def members():
