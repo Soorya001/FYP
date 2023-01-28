@@ -18,17 +18,30 @@ def members():
 def acceptString():
     stringReceived = request.json.get('string')
     language = request.json.get('language')
+    indentation = request.json.get('indentation')
 
     # string is the key name of the identified string
     # language - lang to be converted to.
     # POST request must contain the following- { stringtoSend, ProgLanguage}
 
-    print('data received: ', stringReceived, ' language: ', language)
+    print('data received: ', stringReceived, ' language: ', language, ' current indentation: ', indentation)
 
-    convertedCode =  Converter.extract_keywords(stringReceived, language)  
     # This converts the input command- stringReceived, to its equivalent cpp or python code and returns it as a string.
+    
+    convertedCode, indentation =  Converter.extract_keywords(stringReceived, language, indentation)  
 
-    return json.dumps({"code":convertedCode})    #Returns the converted Code
+    print("updated indentation: ", indentation)
+
+    oldCode = convertedCode
+
+    convertedCode = (indentation * ("\t")) + convertedCode
+
+    if(oldCode == "{\n"):
+        indentation += 1
+
+    return json.dumps({"code":convertedCode, "indentation": indentation})    #Returns the converted Code
+
+
 
 @app.route('/execute/python', methods=['POST'])
 def execute_code():

@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React, { Component, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
@@ -8,6 +7,7 @@ function App() {
 
   const [code, setCode] = useState('hello world!');
   const [output, setOutput] = useState('output');
+  const [ind, setInd] = useState(parseInt(0));
 
   const { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
@@ -31,14 +31,18 @@ function App() {
     }
 
     const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
-      string: transcript,
-      language: lang
+      string: "include headerfile pandas",
+      language: lang,
+      indentation: ind
     });
 
     console.log(response.data);
 
     if (response.data.code != null) {
+      console.log(typeof(response.data.indentation));
       code == "hello world!" ? setCode(response.data.code) : setCode(code + response.data.code);
+      ind = (setInd(parseInt(response.data.indentation)));
+      console.log(ind);
     }
 
     else {
@@ -78,7 +82,6 @@ function App() {
           </div>
 
           <div className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black'> {transcript} </div>
-
 
 
           <div className='m-2 p-2 bg-blue-900 text-white w-fit mx-auto hover:bg-blue-800' onClick={() => sendString()}>

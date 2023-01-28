@@ -1,8 +1,9 @@
 import cpp
 import re
 import python
+import math
 
-def extract_keywords(str,language):
+def extract_keywords(str, language, indentation):
     varName=""
     rangeStart=""
     rangeEnd=""
@@ -23,9 +24,10 @@ def extract_keywords(str,language):
         stepCount = res.group(1).strip()
 
         if(language == "python"):
-            return (python.for_function(varName,rangeStart,rangeEnd,stepCount))
+            return ((python.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
         elif(language == "cpp"):
-            return (cpp.for_function(varName,rangeStart,rangeEnd,stepCount))
+            return ((cpp.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
+
 
 
     elif ("for" in str) or ("For" in str):
@@ -43,38 +45,45 @@ def extract_keywords(str,language):
         stepCount = res.group(1).strip()
 
         if(language == "python"):
-            return (python.for_function(varName,rangeStart,rangeEnd,stepCount))
+            return ((python.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
         elif(language == "cpp"):
-            return (cpp.for_function(varName,rangeStart,rangeEnd,stepCount))
+            return ((cpp.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
+
 
     elif ("include" in str) or ("Include" in str):              # Header Files
         res = re.search('file (.*)', str)
         fileName = res.group(1).strip()
 
         if(language == "python"):
-            return (python.headerFile(fileName))
+            return ((python.headerFile(fileName)), indentation)
         elif(language == "cpp"):
-            return (cpp.headerFile(fileName))
+            return ((cpp.headerFile(fileName)), indentation)
 
     elif ("block" in str ) or ("Block" in str):                 # Open and close Brackets - { } - Blocks
         if language == "cpp":
             if ("open" in str) or ("Open" in str):
-                return "{\n"
+                return ("{\n", indentation)
+
             elif ("close" in str) or ("Close" in str):
-                return "}\n"
+                indentation -= 1
+                indentation = max(0, indentation)
+                return ("}\n", indentation)
 
         elif language == "python":
             if ("open" in str) or ("Open" in str):
-                return "\n\t"
+                indentation += 1
+                return ("\n", indentation)
             elif ("close" in str) or ("Close" in str):
-                return "\n\b\b\b\b"
+                indentation -= 1
+                indentation = max(0, indentation)
+                return ("\n", indentation)
 
 
     elif ("bracket" in str) or ("Bracket" in str):         # Open and close Backets - ( )
         if ("open" in str) or ("Open" in str):
-            return "("
+            return ("(", indentation)
         elif ("close" in str) or ("Close" in str):
-            return ")"
+            return (")", indentation)
 
     elif ("declare" in str) or ("Declare" in str):              # Declaration Statements
         varValue=""
@@ -93,6 +102,6 @@ def extract_keywords(str,language):
         print(varValue)
 
         if( language == "python"):
-            return (python.declaration(varName, dataType, varValue))
+            return ((python.declaration(varName, dataType, varValue)), indentation)
         elif (language == "cpp"):
-            return (cpp.declaration(varName, dataType, varValue))
+            return ((cpp.declaration(varName, dataType, varValue)), indentation)
