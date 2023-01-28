@@ -1,12 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { Component, useState } from 'react';
-import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import axios from "axios";
 
 function App() {
 
   const [code, setCode] = useState('hello world!');
+  const [output, setOutput] = useState('output');
 
   const { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
@@ -24,8 +25,7 @@ function App() {
     var lang = select.options[select.selectedIndex].value;
     console.log(lang);
 
-    if(lang == "nothing")
-    {
+    if (lang == "nothing") {
       alert("please pick a language first!");
       return;
     }
@@ -37,7 +37,7 @@ function App() {
 
     console.log(response.data);
 
-    if(response.data.code != null) {
+    if (response.data.code != null) {
       code == "hello world!" ? setCode(response.data.code) : setCode(code + response.data.code);
     }
 
@@ -55,20 +55,20 @@ function App() {
       {/* <div className='m-5 w-fit rounded-md p-2 text-white bg-orange-600 text-lg'> Language pick </div>
        */}
 
-<div className="m-3 xl:w-96">
-    <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normal text-white
+      <div className="m-3 xl:w-96">
+        <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normal text-white
       bg-gray-800 bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded
       transition ease-in-out m-0
      focus:border-blue-600 focus:outline-none" aria-label="Default select example" id="language_picker">
-        <option selected value="nothing">Select Language</option>
-        <option value="cpp">C++</option>
-        <option value="python">Python</option>
-        <option value="java">Java</option>
-    </select>
-  </div>
+          <option selected value="nothing">Select Language</option>
+          <option value="cpp">C++</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+        </select>
+      </div>
       <div className='grid grid-cols-6 m-5 h-screen'>
-        
-        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' value={ code || " "}/>
+
+        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' value={code || " "} />
 
         <div className='col-span-2'>
 
@@ -79,24 +79,25 @@ function App() {
 
           <div className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black'> {transcript} </div>
 
+
+
           <div className='m-2 p-2 bg-blue-900 text-white w-fit mx-auto hover:bg-blue-800' onClick={() => sendString()}>
-            accept
+            Accept
           </div>
 
-          <div className='m-5 p-2 bg-orange-500 text-white w-fit'>
+
+          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit'>
             Execute
           </div>
 
-          <div className='m-5 p-2 bg-slate-500 text-white w-fit'>
-            Output
-          </div>
+          <div className='m-5 p-2 h-1/4 w-10/12 bg-blue-300 text-black'> {output} </div>
 
         </div>
 
       </div>
 
     </div>
-    
+
   );
 }
 
