@@ -105,3 +105,32 @@ def extract_keywords(str, language, indentation):
             return ((python.declaration(varName, dataType, varValue)), indentation)
         elif (language == "cpp"):
             return ((cpp.declaration(varName, dataType, varValue)), indentation)
+            
+    elif ( ("function" in str) or ("Function" in str)):
+        res = re.search('function' + '(.*)' + 'type',str)
+        functionName = res.group(1).strip()
+
+        res = re.search('type' + '(.*)' + 'parameters',str)
+        returnType = res.group(1).strip()
+
+        res = re.search('parameters (.*)',str)
+        argumentGroup = res.group(1).strip()
+
+        # print("Function name:"+functionName+"Return Type:"+returnType+"PArameters:"+arguments)
+        # ['integer i', 'float j'] 
+
+        if(not (argumentGroup == "none" or argumentGroup=="None")):
+            indarg = argumentGroup.split("and")
+            indarg = [e.strip() for e in indarg]
+            arguments = []
+            for arg in indarg:
+                individualArgument = [dataType, varName] = arg.split(' ')
+                arguments.append(individualArgument)
+        else:
+            arguments=[]
+
+        # print("Arguments are: ",arguments)
+        if(language == "cpp"):
+            return (cpp.createFunction(functionName, returnType, arguments),indentation)
+        elif(language == "python"):
+            return (python.createFunction(functionName, returnType, arguments),indentation)

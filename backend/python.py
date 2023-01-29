@@ -23,3 +23,18 @@ def declaration(varName, dataType, varValue):
         declarationStatement = f'{varName} = {varValue}\n'
 
     return declarationStatement
+
+def createFunction(functionName, returnType, arguments):
+    
+    if(len(arguments)==0):
+        argumentsString=""
+    else:
+        argumentsList=[]
+        for argument in arguments:
+            argumentsList.append(argument[1])
+        print("ArgumentList is:",argumentsList)
+        
+        argumentsString = " , ".join(argumentsList)
+        # print("argument string is:"+argumentsString)
+
+    return f"def {functionName}( {argumentsString}):"
