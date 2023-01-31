@@ -134,3 +134,6 @@ def extract_keywords(str, language, indentation):
             return (cpp.createFunction(functionName, returnType, arguments),indentation)
         elif(language == "python"):
             return (python.createFunction(functionName, returnType, arguments),indentation)
+
+    else:                           # For testing purposes. I can give print statments to see the output. Should remove later
+        return (str+"\n",indentation)

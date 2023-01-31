@@ -22,8 +22,29 @@ function App() {
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return <span>Brower doesnt support speech</span>;
   }
+  const executeCode = async (programString) => {
+    console.log("CODE IS",programString.code);
+    const header={
+      'Content-Type': 'application/json'
+    }
 
-
+    try{
+      const response = await axios.post('https://api.codex.jaagrav.in',{
+        code:programString.code,
+        language:"cpp"                                // cplusplus - cpp, python -py
+      },{headers:header})
+      
+      if(response.data.output!=''){
+        setOutput(response.data.output);
+      }
+      else{
+        setOutput(response.data.error);
+      }
+      console.log(response)
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   const sendString = async () => {
 
@@ -39,7 +60,7 @@ function App() {
     }
 
     const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
-      string: "close block",
+      string:"close block",
       language: lang,
       indentation: ind
     });
@@ -112,7 +133,7 @@ function App() {
             </div>
           </div>
 
-          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit'>
+          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit' onClick={() => executeCode({code})}>
             Execute
           </div>
 
