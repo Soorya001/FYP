@@ -3,6 +3,7 @@ import React, { Component, useEffect, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import axios from "axios";
 
+
 function App() {
 
   var [code, setCode] = useState('hello world!');
@@ -148,13 +149,12 @@ function App() {
             Execute
           </div>
 
-          <div className='m-5 p-2 h-1/4 w-10/12 bg-blue-300 text-black'> {output} </div>
-
+          <textarea className='m-5 p-2 h-1/4 w-10/12 bg-blue-300 text-black' value={output} />
         </div>
 
       </div>
 
-    </div >
+    </div>
 
   );
 }
