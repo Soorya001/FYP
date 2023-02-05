@@ -10,6 +10,8 @@ function App() {
   var [ind, setInd] = useState(parseInt(0));
   var [resp, setResp] = useState({});
   var [displayText, setDisplayText] = useState("");
+  var [newCode, setNewCode] = useState("");
+  var lang;
 
   var { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
@@ -22,26 +24,34 @@ function App() {
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return <span>Brower doesnt support speech</span>;
   }
+
   const executeCode = async (programString) => {
-    console.log("CODE IS",programString.code);
-    const header={
+    console.log("CODE IS", programString.code);
+    const header = {
       'Content-Type': 'application/json'
     }
 
-    try{
-      const response = await axios.post('https://api.codex.jaagrav.in',{
-        code:programString.code,
-        language:"cpp"                                // cplusplus - cpp, python -py
-      },{headers:header})
-      
-      if(response.data.output!=''){
+    try {
+      var lang2;
+      if (lang == "cpp")
+        lang2 = "cpp"
+
+      else
+        lang2 = "py"
+
+      const response = await axios.post('https://api.codex.jaagrav.in', {
+        code: programString.code,
+        language: lang2                              // cplusplus - cpp, python -py
+      }, { headers: header })
+
+      if (response.data.output != '') {
         setOutput(response.data.output);
       }
-      else{
+      else {
         setOutput(response.data.error);
       }
       console.log(response)
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   }
@@ -51,7 +61,7 @@ function App() {
     console.log('sending string');
 
     var select = document.getElementById('language_picker');
-    var lang = select.options[select.selectedIndex].value;
+    lang = select.options[select.selectedIndex].value;
     console.log(lang);
 
     if (lang == "nothing") {
@@ -60,7 +70,7 @@ function App() {
     }
 
     const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
-      string:"close block",
+      string: transcript,  //add 'transcript' for actual sentence
       language: lang,
       indentation: ind
     });
@@ -75,6 +85,7 @@ function App() {
       //code == "hello world!" ? setCode(response.data.code) : setCode(code + response.data.code);
       ind = setInd(response.data.indentation);
       console.log(ind);
+      setNewCode(response.data.code);
     }
 
     else {
@@ -88,7 +99,7 @@ function App() {
 
 
   const acceptCode = () => {
-    code == "hello world!" ? setCode(resp.data.code) : setCode(code + resp.data.code);
+    code == "hello world!" ? setCode(newCode) : setCode(code + newCode);
     resetTranscript();
     setDisplayText("");
   }
@@ -113,7 +124,7 @@ function App() {
       </div>
       <div className='grid grid-cols-6 m-5 h-screen'>
 
-        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' value={code || " "} />
+        <textarea className='col-span-4 p-2 h-4/5 bg-blue-900 text-white' onChange={(e) => { setCode(e.target.value) }} value={code || " "} />
 
         <div className='col-span-2'>
 
@@ -122,7 +133,7 @@ function App() {
             <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={SpeechRecognition.stopListening}> Stop </div>
           </div>
 
-          <div className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black'> {displayText} </div>
+          <textarea className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black' onChange={(e) => { setDisplayText(e.target.value); setNewCode(e.target.value) }} value={displayText} />
 
           <div className='flex justify-center'>
             <div className='m-2 p-2 bg-blue-900 text-white w-fit hover:bg-blue-800' onClick={() => sendString()}>
@@ -133,7 +144,7 @@ function App() {
             </div>
           </div>
 
-          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit' onClick={() => executeCode({code})}>
+          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit' onClick={() => executeCode({ code })}>
             Execute
           </div>
 
