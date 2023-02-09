@@ -12,7 +12,7 @@ function App() {
   var [resp, setResp] = useState({});
   var [displayText, setDisplayText] = useState("");
   var [newCode, setNewCode] = useState("");
-  var lang;
+  const [language,setLanguage] = useState('');
 
   var { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
@@ -26,15 +26,15 @@ function App() {
     return <span>Brower doesnt support speech</span>;
   }
 
-  const executeCode = async (programString) => {
+  const executeCode = async (programString, lang) => {
     console.log("CODE IS", programString.code);
     const header = {
       'Content-Type': 'application/json'
     }
-
+    console.log("Here lang is : ",lang)
     try {
       var lang2;
-      if (lang == "cpp")
+      if (lang.language == "cpp")
         lang2 = "cpp"
 
       else
@@ -62,8 +62,9 @@ function App() {
     console.log('sending string');
 
     var select = document.getElementById('language_picker');
-    lang = select.options[select.selectedIndex].value;
-    console.log(lang);
+    var lang = select.options[select.selectedIndex].value;
+    setLanguage(lang);
+    console.log("Lang is :",language);
 
     if (lang == "nothing") {
       alert("please pick a language first!");
@@ -119,7 +120,7 @@ function App() {
      focus:border-blue-600 focus:outline-none" aria-label="Default select example" id="language_picker">
           <option selected value="nothing">Select Language</option>
           <option value="cpp">C++</option>
-          <option value="python">Python</option>
+          <option value="py">Python</option>
           <option value="java">Java</option>
         </select>
       </div>
@@ -145,7 +146,7 @@ function App() {
             </div>
           </div>
 
-          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit' onClick={() => executeCode({ code })}>
+          <div className='m-5 p-2 mx-auto bg-orange-500 text-white w-fit' onClick={() => executeCode({code},{language})}>
             Execute
           </div>
 
