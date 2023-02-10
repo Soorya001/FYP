@@ -75,7 +75,7 @@ function App() {
     }
 
     const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
-      string: transcript,  //add 'transcript' for actual sentence
+      string: "include header file pandas",  //add 'transcript' for actual sentence
       language: lang,
       indentation: ind
     });
@@ -123,7 +123,7 @@ function App() {
      focus:border-blue-600 focus:outline-none" aria-label="Default select example" id="language_picker">
           <option selected value="nothing">Select Language</option>
           <option value="cpp">C++</option>
-          <option value="py">Python</option>
+          <option value="python">Python</option>
           <option value="java">Java</option>
         </select>
       </div>
