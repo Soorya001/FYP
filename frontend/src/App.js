@@ -2,6 +2,7 @@ import './App.css';
 import React, { Component, useEffect, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import axios from "axios";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 
 function App() {
@@ -13,6 +14,21 @@ function App() {
   var [displayText, setDisplayText] = useState("");
   var [newCode, setNewCode] = useState("");
   const [language, setLanguage] = useState('');
+  const [isActive, setIsActive] = useState(false);
+
+  var {
+    status,
+    startRecording,
+    stopRecording,
+    pauseRecording,
+    mediaBlobUrl
+  } = useReactMediaRecorder({
+    video: false,
+    audio: true,
+    echoCancellation: true
+  });
+
+  console.log("url", mediaBlobUrl);
 
   var { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true
@@ -74,8 +90,8 @@ function App() {
       return;
     }
 
-    const response = await axios.post(' http://127.0.0.1:5000/acceptString', {
-      string: "include header file pandas",  //add 'transcript' for actual sentence
+    const response = await axios.post('http://127.0.0.1:5000/acceptString', {
+      string: transcript,  //add 'transcript' for actual sentence
       language: lang,
       indentation: ind
     });
@@ -100,6 +116,22 @@ function App() {
     setDisplayText("code: " + response.data.code);
     console.log("setting diplay text");
     //resetTranscript();
+  }
+
+  const sendAudio = async () => {
+    console.log('sending audio to backend')
+
+    var fd = new FormData();
+    console.log("going to append this " + mediaBlobUrl)
+    let blob = await fetch(mediaBlobUrl).then(r => r.blob());
+    fd.append("audio_data", blob, "audio.wav");
+
+    var url = 'http://127.0.0.1:5000/acceptAudio';
+    fetch(url, {
+      mode: "cors",
+      method: "post",
+      body: fd
+    });
   }
 
 
@@ -134,8 +166,30 @@ function App() {
         <div className='col-span-2'>
 
           <div className='flex justify-center'>
-            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={SpeechRecognition.startListening}> Listen </div>
-            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={SpeechRecognition.stopListening}> Stop </div>
+            {/* <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={SpeechRecognition.startListening}> Listen </div>
+            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={SpeechRecognition.stopListening}> Stop </div> */}
+            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={() => {
+              if (!isActive) {
+                startRecording();
+              }
+              else {
+                pauseRecording();
+              }
+
+              setIsActive(!isActive)
+            }}> Start </div>
+
+            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={() => {
+              stopRecording();
+              pauseRecording();
+              sendAudio();
+            }}> Stop </div>
+
+          </div>
+
+          <div className='h-5'>
+            {" "}
+            <video src={mediaBlobUrl} controls />
           </div>
 
           <textarea className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black' onChange={(e) => { setDisplayText(e.target.value); setNewCode(e.target.value) }} value={displayText} />
