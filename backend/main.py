@@ -11,7 +11,6 @@ sys.path.append('D:\fyp\FYP\backend\speech\speechbrain')
 asr_model = EncoderDecoderASR.from_hparams(
     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
 
-
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'

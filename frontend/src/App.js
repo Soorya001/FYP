@@ -3,7 +3,9 @@ import React, { Component, useEffect, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import axios from "axios";
 import { useReactMediaRecorder } from "react-media-recorder";
+import MicRecorder from 'mic-recorder-to-mp3';
 
+const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 function App() {
 
@@ -17,17 +19,12 @@ function App() {
   const [language, setLanguage] = useState('');
   const [isActive, setIsActive] = useState(false);
 
-  var {
-    status,
-    startRecording,
-    stopRecording,
-    pauseRecording,
-    mediaBlobUrl
-  } = useReactMediaRecorder({
-    video: false,
-    audio: true,
-    echoCancellation: true
-  });
+  const [isRecording, setisRecording] = useState(false);
+  const [blobURL, setblobURL] = useState('');
+  const [isBlocked, setisBlocked] = useState(false);
+
+
+  var mediaBlobUrl = blobURL;
 
   useEffect(() => {
     if (mediaBlobUrl != undefined)
@@ -39,6 +36,29 @@ function App() {
   // var { transcript, resetTranscript } = useSpeechRecognition({
   //   continuous: true
   // });
+
+  const start = () => {
+    if (isBlocked) {
+      console.log('Permission Denied');
+    } else {
+      Mp3Recorder
+        .start()
+        .then(() => {
+          setisRecording(true);
+        }).catch((e) => console.error(e));
+    }
+  };
+
+  const stop = () => {
+    Mp3Recorder
+      .stop()
+      .getMp3()
+      .then(([buffer, blob]) => {
+        const blobURL = URL.createObjectURL(blob)
+        setblobURL(blobURL);
+        setisRecording(false);
+      }).catch((e) => console.log(e));
+  }
 
   useEffect(() => {
     setDisplayText(transcript);
@@ -130,7 +150,14 @@ function App() {
     var fd = new FormData();
     console.log("going to append this " + mediaBlobUrl)
     let blob = await fetch(mediaBlobUrl).then(r => r.blob());
-    fd.append("audio_data", blob, "audio.wav");
+
+    console.log(blob);
+
+    let audio = new File([blob], 'audio.wav', { type: 'audio/wav' })
+
+    console.log(audio);
+
+    fd.append("audio_data", audio);
 
     axios({
       method: "post",
@@ -179,21 +206,15 @@ function App() {
           <div className='flex justify-center'>
             {/* <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={SpeechRecognition.startListening}> Listen </div>
             <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={SpeechRecognition.stopListening}> Stop </div> */}
-            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={() => {
-              if (!isActive) {
-                startRecording();
-              }
-              else {
-                pauseRecording();
-              }
-
-              setIsActive(!isActive)
+            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' disabled={isRecording} onClick={() => {
+              start();
             }}> Start </div>
 
-            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={() => {
-              stopRecording();
-              pauseRecording();
+            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' disabled={!isRecording} onClick={() => {
+              stop()
             }}> Stop </div>
+
+            <audio src={blobURL} controls="controls" />
 
           </div>
 
