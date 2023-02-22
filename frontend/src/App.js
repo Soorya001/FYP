@@ -121,7 +121,6 @@ function App() {
 
     setDisplayText("code: " + response.data.code);
     console.log("setting diplay text");
-    //resetTranscript();
   }
 
   const sendAudio = async () => {
@@ -147,7 +146,6 @@ function App() {
         console.log(response);
       });
 
-    // console.log(response.data)
   }
 
 
@@ -160,9 +158,6 @@ function App() {
   return (
 
     <div className='h-screen w-screen'>
-
-      {/* <div className='m-5 w-fit rounded-md p-2 text-white bg-orange-600 text-lg'> Language pick </div>
-       */}
 
       <div className="m-3 xl:w-96">
         <select className="form-select appearance-none block w-1/2 px-3 py-1.5 text-base font-normal text-white

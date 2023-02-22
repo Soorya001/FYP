@@ -32,11 +32,13 @@ def acceptAudio():
     print(audio)
     audio.save('F:/audio.wav')
 
+    print('received audio file', type(audio), sys.getsizeof(audio))
+
+    text = asr_model.transcribe_file('F:/audio.wav')
+
     audio.flush()
     audio.close()
 
-    print('received audio file', type(audio), sys.getsizeof(audio))
-    text = asr_model.transcribe_file('F:/file_example_WAV_1MG.wav')
     return json.dumps({"received": text})
 
 
