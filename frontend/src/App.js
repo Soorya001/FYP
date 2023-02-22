@@ -13,6 +13,7 @@ function App() {
   var [resp, setResp] = useState({});
   var [displayText, setDisplayText] = useState("");
   var [newCode, setNewCode] = useState("");
+  var [transcript, setTranscript] = useState("");
   const [language, setLanguage] = useState('');
   const [isActive, setIsActive] = useState(false);
 
@@ -28,11 +29,16 @@ function App() {
     echoCancellation: true
   });
 
+  useEffect(() => {
+    if (mediaBlobUrl != undefined)
+      sendAudio();
+  }, [mediaBlobUrl])
+
   console.log("url", mediaBlobUrl);
 
-  var { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true
-  });
+  // var { transcript, resetTranscript } = useSpeechRecognition({
+  //   continuous: true
+  // });
 
   useEffect(() => {
     setDisplayText(transcript);
@@ -119,6 +125,7 @@ function App() {
   }
 
   const sendAudio = async () => {
+
     console.log('sending audio to backend')
 
     var fd = new FormData();
@@ -126,18 +133,27 @@ function App() {
     let blob = await fetch(mediaBlobUrl).then(r => r.blob());
     fd.append("audio_data", blob, "audio.wav");
 
-    var url = 'http://127.0.0.1:5000/acceptAudio';
-    fetch(url, {
-      mode: "cors",
+    axios({
       method: "post",
-      body: fd
-    });
+      url: "http://127.0.0.1:5000/acceptAudio",
+      data: fd,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        console.log(response.data);
+        setTranscript(response.data.received);
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+
+    // console.log(response.data)
   }
 
 
   const acceptCode = () => {
     code == "hello world!" ? setCode(newCode) : setCode(code + newCode);
-    resetTranscript();
+    setTranscript("");
     setDisplayText("");
   }
 
@@ -182,15 +198,15 @@ function App() {
             <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={() => {
               stopRecording();
               pauseRecording();
-              sendAudio();
             }}> Stop </div>
 
           </div>
 
-          <div className='h-5'>
+
+          {/* <div className='h-5'>
             {" "}
             <video src={mediaBlobUrl} controls />
-          </div>
+          </div> */}
 
           <textarea className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black' onChange={(e) => { setDisplayText(e.target.value); setNewCode(e.target.value) }} value={displayText} />
 

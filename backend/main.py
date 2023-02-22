@@ -1,11 +1,16 @@
-import json
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-import phraseToCode as Converter
-import sys
-from io import StringIO
-from playsound import playsound
+from speechbrain.pretrained import EncoderDecoderASR
+import speechbrain as sb
 from base64 import b64decode
+from io import StringIO
+import phraseToCode as Converter
+from flask_cors import CORS, cross_origin
+from flask import Flask, request, jsonify
+import json
+import sys
+sys.path.append('D:\fyp\FYP\backend\speech\speechbrain')
+asr_model = EncoderDecoderASR.from_hparams(
+    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -26,11 +31,13 @@ def acceptAudio():
     audio = request.files['audio_data']
     print(audio)
     audio.save('F:/audio.wav')
+
     audio.flush()
     audio.close()
 
     print('received audio file', type(audio), sys.getsizeof(audio))
-    return json.dumps({"status": "success"})
+    text = asr_model.transcribe_file('F:/file_example_WAV_1MG.wav')
+    return json.dumps({"received": text})
 
 
 @app.route('/acceptString', methods=['POST'])
