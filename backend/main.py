@@ -29,11 +29,11 @@ def acceptAudio():
     print(request.files)
     audio = request.files['audio_data']
     print(audio)
-    audio.save('F:/audio.wav')
+    audio.save('F:/audio.mp3')
 
     print('received audio file', type(audio), sys.getsizeof(audio))
 
-    text = asr_model.transcribe_file('F:/audio.wav')
+    text = asr_model.transcribe_file('F:/audio.mp3')
 
     audio.flush()
     audio.close()

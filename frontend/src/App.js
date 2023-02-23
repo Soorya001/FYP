@@ -153,7 +153,7 @@ function App() {
 
     console.log(blob);
 
-    let audio = new File([blob], 'audio.wav', { type: 'audio/wav' })
+    let audio = new File([blob], 'audio.mp3', { type: 'audio/mp3' })
 
     console.log(audio);
 
