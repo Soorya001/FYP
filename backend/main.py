@@ -26,19 +26,23 @@ def members():
 @app.route('/acceptAudio', methods=['POST'])
 def acceptAudio():
 
-    print(request.files)
-    audio = request.files['audio_data']
-    print(audio)
-    audio.save('F:/audio.mp3')
+    try:
+        print(request.files)
+        audio = request.files['audio_data']
+        print(audio)
+        audio.save('F:/audio.mp3')
 
-    print('received audio file', type(audio), sys.getsizeof(audio))
+        print('received audio file', type(audio), sys.getsizeof(audio))
 
-    text = asr_model.transcribe_file('F:/audio.mp3')
+        text = asr_model.transcribe_file('F:/audio.mp3')
 
-    audio.flush()
-    audio.close()
+        audio.flush()
+        audio.close()
 
-    return json.dumps({"received": text})
+        return json.dumps({"received": text})
+
+    except:
+        return json.dumps({"reviced": "ERRORONOUS AUDIO"})
 
 
 @app.route('/acceptString', methods=['POST'])

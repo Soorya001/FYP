@@ -15,7 +15,6 @@ function App() {
   var [resp, setResp] = useState({});
   var [displayText, setDisplayText] = useState("");
   var [newCode, setNewCode] = useState("");
-  var [transcript, setTranscript] = useState("");
   const [language, setLanguage] = useState('');
   const [isActive, setIsActive] = useState(false);
 
@@ -23,19 +22,11 @@ function App() {
   const [blobURL, setblobURL] = useState('');
   const [isBlocked, setisBlocked] = useState(false);
 
-
-  var mediaBlobUrl = blobURL;
-
   useEffect(() => {
-    if (mediaBlobUrl != undefined)
+    if (blobURL != undefined)
       sendAudio();
-  }, [mediaBlobUrl])
+  }, [blobURL])
 
-  console.log("url", mediaBlobUrl);
-
-  // var { transcript, resetTranscript } = useSpeechRecognition({
-  //   continuous: true
-  // });
 
   const start = () => {
     if (isBlocked) {
@@ -60,9 +51,6 @@ function App() {
       }).catch((e) => console.log(e));
   }
 
-  useEffect(() => {
-    setDisplayText(transcript);
-  }, [transcript]);
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return <span>Brower doesnt support speech</span>;
@@ -117,7 +105,7 @@ function App() {
     }
 
     const response = await axios.post('http://127.0.0.1:5000/acceptString', {
-      string: transcript,  //add 'transcript' for actual sentence
+      string: displayText,  //add 'transcript' for actual sentence
       language: lang,
       indentation: ind
     });
@@ -148,8 +136,8 @@ function App() {
     console.log('sending audio to backend')
 
     var fd = new FormData();
-    console.log("going to append this " + mediaBlobUrl)
-    let blob = await fetch(mediaBlobUrl).then(r => r.blob());
+    console.log("going to append this " + blobURL)
+    let blob = await fetch(blobURL).then(r => r.blob());
 
     console.log(blob);
 
@@ -167,18 +155,16 @@ function App() {
     })
       .then(function (response) {
         console.log(response.data);
-        setTranscript(response.data.received);
+        setDisplayText(response.data.received);
       })
       .catch(function (response) {
         console.log(response);
       });
-
   }
 
 
   const acceptCode = () => {
     code == "hello world!" ? setCode(newCode) : setCode(code + newCode);
-    setTranscript("");
     setDisplayText("");
   }
 
@@ -204,25 +190,18 @@ function App() {
         <div className='col-span-2'>
 
           <div className='flex justify-center'>
-            {/* <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' onClick={SpeechRecognition.startListening}> Listen </div>
-            <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' onClick={SpeechRecognition.stopListening}> Stop </div> */}
             <div className='ml-5 w-100 h-fit p-5 rounded-full bg-green-600 text-white hover:bg-green-500' disabled={isRecording} onClick={() => {
               start();
             }}> Start </div>
 
             <div className='ml-5 w-100 h-fit p-5 rounded-full bg-red-600 text-white hover:bg-red-500' disabled={!isRecording} onClick={() => {
-              stop()
+              stop();
             }}> Stop </div>
 
-            <audio src={blobURL} controls="controls" />
+            {/* <audio src={blobURL} controls="controls" /> */}
 
           </div>
 
-
-          {/* <div className='h-5'>
-            {" "}
-            <video src={mediaBlobUrl} controls />
-          </div> */}
 
           <textarea className='m-5 p-2 h-1/6 w-10/12 bg-blue-200 text-black' onChange={(e) => { setDisplayText(e.target.value); setNewCode(e.target.value) }} value={displayText} />
 
