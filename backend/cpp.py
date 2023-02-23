@@ -4,9 +4,9 @@ def for_function(varName,start,end,step):
     startNo = int(start)
     endNo = int(end)
     if(startNo < endNo):
-        return f'for({varName}={start};{varName}<={end};{varName}+={step})'
+        return f'for({varName}={start};{varName}<={end};{varName}+={step})\n'
     else:
-        return f'for({varName}={start};{varName}>={end};{varName}-={step})'
+        return f'for({varName}={start};{varName}>={end};{varName}-={step})\n'
 
 
 def headerFile(fileName):
