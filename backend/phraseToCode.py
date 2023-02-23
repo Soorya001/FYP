@@ -3,46 +3,36 @@ import re
 import python
 import math
 
+forPossibilities = ["iterate","for","loop","traverse","traverses"]
+declarationPossibilites = ["declare","initialize","variable"]
+
 def extract_keywords(str, language, indentation):
     varName=""
     rangeStart=""
     rangeEnd=""
     stepCount=""
 
-    if ("iterate" in str) or ("Iterate" in str):
+    # Splits the string into list of individual word
+    strList = str.split()          
+ 
+    if any( phrase in strList for phrase in forPossibilities ):
 
-        res = re.search('iterate'+'(.*)'+'from',str)
-        varName = res.group(1).strip()
+         # Word followed by 'variable' is the variable name
 
-        res = re.search('from'+'(.*)'+'till',str)
-        rangeStart = res.group(1).strip()
+        if "variable" in strList:                
+            ind = strList.index("variable")
+            if ind < ( len(strList) - 1 ):
+                varName = strList[ ind+1 ]
+ 
+        # extracts all numbers in the string str
+        numValues = [int(s) for s in re.findall(r'-?\d+\.?\d*', str)] 
 
-        res = re.search('till' + '(.*)' + 'step', str)
-        rangeEnd = res.group(1).strip()
-
-        res = re.search('count (.*)', str)
-        stepCount = res.group(1).strip()
-
-        if(language == "python"):
-            return ((python.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
-        elif(language == "cpp"):
-            return ((cpp.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
-
-
-
-    elif ("for" in str) or ("For" in str):
-    
-        res = re.search('loop'+'(.*)'+'from',str)
-        varName = res.group(1).strip()
-
-        res = re.search('from'+'(.*)'+'till',str)
-        rangeStart = res.group(1).strip()
-
-        res = re.search('till' + '(.*)' + 'step', str)
-        rangeEnd = res.group(1).strip()
-
-        res = re.search('count (.*)', str)
-        stepCount = res.group(1).strip()
+        print("Num values are: ",numValues)
+        if( len(numValues) >= 3 ):
+            rangeStart = numValues[0]
+            rangeEnd = numValues[1]
+            stepCount = numValues[2]
+        
 
         if(language == "python"):
             return ((python.for_function(varName,rangeStart,rangeEnd,stepCount)), indentation)
@@ -85,19 +75,20 @@ def extract_keywords(str, language, indentation):
         elif ("close" in str) or ("Close" in str):
             return (")", indentation)
 
-    elif ("declare" in str) or ("Declare" in str):              # Declaration Statements
+    elif any(phrase in strList for phrase in declarationPossibilites):              # Declaration Statements
         varValue=""
         dataType=""
         str = str.lower()
 
-        res = re.search('declare' + '(.*)' + 'variable',str)
-        dataType = res.group(1).strip()
+        # Format - "{any of the declarationPossibilities}... {dataType} variable {variableName}.... {value}" 
+        varNameIndex = strList.index("variable")
+        varValueIndex = strList.index("value")
+        if (varNameIndex+1) < len(strList) and (varNameIndex-1) >= 0:
+            varName = strList[ varNameIndex + 1 ]
+            dataType = strList[ varNameIndex - 1 ]
 
-        res = re.search('variable' + '(.*)' + 'value',str)
-        varName = res.group(1).strip()
-
-        res = re.search('value (.*)',str)
-        varValue = res.group(1).strip()
+        if ( varValueIndex + 1 ) < len( strList ):
+            varValue = strList[ varValueIndex + 1 ]
 
         print(varValue)
 
