@@ -7,9 +7,39 @@ from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify
 import json
 import sys
+import requests
+
+
+API_URL = "https://api-inference.huggingface.co/models/openai/whisper-medium"
+headers = {"Authorization": "Bearer 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"}
+
+
+def clean_text(text):
+
+    # removing a full stop if present
+    if text[-1] == '.':
+        text = text[:-1]
+
+    # making evething small case for better processing
+    text = text.toLowerCase()
+    return text
+
+
+def query(filename):
+    with open(filename, "rb") as f:
+        data = f.read()
+    response = requests.post(API_URL, headers=headers, data=data)
+    return response.json()
+
+
 sys.path.append('D:\fyp\FYP\backend\speech\speechbrain')
+
+# asr_model = EncoderDecoderASR.from_hparams(
+#     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+
+
 asr_model = EncoderDecoderASR.from_hparams(
-    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="F:\save-20230308T062600Z-002\save\CKPT+2023-03-07+19-14-24+00")
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -34,7 +64,11 @@ def acceptAudio():
 
         print('received audio file', type(audio), sys.getsizeof(audio))
 
-        text = asr_model.transcribe_file('F:/audio.mp3')
+        # text = asr_model.transcribe_file('F:/audio.mp3')
+
+        text = query('F:/audio.mp3')['text']
+
+        text = clean_text(text)
 
         audio.flush()
         audio.close()
