@@ -21,7 +21,7 @@ def clean_text(text):
         text = text[:-1]
 
     # making evething small case for better processing
-    text = text.toLowerCase()
+    text = text.lower()
     return text
 
 
@@ -64,9 +64,10 @@ def acceptAudio():
 
         print('received audio file', type(audio), sys.getsizeof(audio))
 
-        # text = asr_model.transcribe_file('F:/audio.mp3')
+        text = asr_model.transcribe_file('F:/audio.mp3')
+        print(text)
 
-        text = query('F:/audio.mp3')['text']
+        # text = query('F:/audio.mp3')['text']
 
         text = clean_text(text)
 

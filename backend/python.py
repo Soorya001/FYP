@@ -1,4 +1,4 @@
-def for_function(varName,start,end,step):
+def for_function(varName, start, end, step):
     startNo = int(start)
     endNo = int(end)
     stepNo = int(step)
@@ -11,30 +11,33 @@ def for_function(varName,start,end,step):
 def headerFile(fileName):
     return f'import {fileName}\n'
 
+
 def declaration(varName, dataType, varValue):
     declarationStatement = ""
 
-    if(dataType == "boolean"):                          # Because input varValue will be in lowercase. And boolean value in python are True and False;
+    # Because input varValue will be in lowercase. And boolean value in python are True and False;
+    if (dataType == "boolean"):
         varValue = varValue.capitalize()
 
-    if(dataType == "string"):
+    if (dataType == "string"):
         declarationStatement = f'{varName} = "{varValue}"\n'
     else:
         declarationStatement = f'{varName} = {varValue}\n'
 
     return declarationStatement
 
+
 def createFunction(functionName, returnType, arguments):
-    
-    if(len(arguments)==0):
-        argumentsString=""
+
+    if (len(arguments) == 0):
+        argumentsString = ""
     else:
-        argumentsList=[]
+        argumentsList = []
         for argument in arguments:
             argumentsList.append(argument[1])
-        print("ArgumentList is:",argumentsList)
-        
+        print("ArgumentList is:", argumentsList)
+
         argumentsString = " , ".join(argumentsList)
         # print("argument string is:"+argumentsString)
 
-    return f"def {functionName}( {argumentsString}):"
+    return f"def {functionName}( {argumentsString}):\n"
