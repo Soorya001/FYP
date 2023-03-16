@@ -23,7 +23,7 @@ function App() {
   const [isBlocked, setisBlocked] = useState(false);
 
   useEffect(() => {
-    if (blobURL != undefined)
+    if (blobURL != undefined && blobURL != '')
       sendAudio();
   }, [blobURL])
 

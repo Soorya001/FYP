@@ -8,6 +8,8 @@ from flask import Flask, request, jsonify
 import json
 import sys
 import requests
+import time
+from pydub import AudioSegment
 
 
 API_URL = "https://api-inference.huggingface.co/models/openai/whisper-medium"
@@ -31,15 +33,12 @@ def query(filename):
     response = requests.post(API_URL, headers=headers, data=data)
     return response.json()
 
+asr_model = EncoderDecoderASR.from_hparams(
+    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="Desktop/speech/speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
 
-sys.path.append('D:\fyp\FYP\backend\speech\speechbrain')
 
 # asr_model = EncoderDecoderASR.from_hparams(
-#     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-
-
-asr_model = EncoderDecoderASR.from_hparams(
-    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="F:\save-20230308T062600Z-002\save\CKPT+2023-03-07+19-14-24+00")
+#     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="F:\save-20230308T062600Z-002\save\CKPT+2023-03-07+19-14-24+00")
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -54,17 +53,33 @@ def members():
 
 
 @app.route('/acceptAudio', methods=['POST'])
-def acceptAudio():
+async def acceptAudio():
 
     try:
         print(request.files)
         audio = request.files['audio_data']
         print(audio)
-        audio.save('F:/audio.mp3')
+        audio.save('audio.mp3')
 
-        print('received audio file', type(audio), sys.getsizeof(audio))
+        # convert mp3 to wav file
+        src = "audio.mp3"
+        dst = "audio.wav"
 
-        text = asr_model.transcribe_file('F:/audio.mp3')
+        sound = AudioSegment.from_mp3(src)
+
+        print("loaded sound, now converting")
+
+        sound.export(dst, format="wav")
+
+        print("\nconverted successfully, starting to wait\n")
+
+        time.sleep(1)
+
+        print("\nwait is over now\n")
+
+        print('\nreceived audio file', type(audio), sys.getsizeof(audio))
+
+        text = asr_model.transcribe_file('/home/soorya/Desktop/speech/FYP/backend/audio.wav')
         print(text)
 
         # text = query('F:/audio.mp3')['text']
@@ -76,7 +91,8 @@ def acceptAudio():
 
         return json.dumps({"received": text})
 
-    except:
+    except Exception as e:
+        print(e)
         return json.dumps({"reviced": "ERRORONOUS AUDIO"})
 
 
