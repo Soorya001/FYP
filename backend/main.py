@@ -11,9 +11,15 @@ import requests
 import time
 from pydub import AudioSegment
 
-
+API_TOKEN = "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"
 API_URL = "https://api-inference.huggingface.co/models/openai/whisper-medium"
-headers = {"Authorization": "Bearer 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"}
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+def query(filename):
+    with open(filename, "rb") as f:
+        data = f.read()
+    response = requests.post(API_URL, headers=headers, data=data)
+    return response.json()
 
 
 def clean_text(text):
@@ -27,18 +33,13 @@ def clean_text(text):
     return text
 
 
-def query(filename):
-    with open(filename, "rb") as f:
-        data = f.read()
-    response = requests.post(API_URL, headers=headers, data=data)
-    return response.json()
-
-asr_model = EncoderDecoderASR.from_hparams(
-    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="Desktop/speech/speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
-
 
 # asr_model = EncoderDecoderASR.from_hparams(
-#     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="F:\save-20230308T062600Z-002\save\CKPT+2023-03-07+19-14-24+00")
+#     source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="Desktop/speech/speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
+
+
+asr_model = EncoderDecoderASR.from_hparams(
+    source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="/home/soorya/Desktop/save/CKPT+2023-03-10+16-28-42+00")
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -73,16 +74,18 @@ async def acceptAudio():
 
         print("\nconverted successfully, starting to wait\n")
 
-        time.sleep(1)
+        # time.sleep(1)
+
+        text = ""
 
         print("\nwait is over now\n")
 
         print('\nreceived audio file', type(audio), sys.getsizeof(audio))
 
-        text = asr_model.transcribe_file('/home/soorya/Desktop/speech/FYP/backend/audio.wav')
-        print(text)
+        # text += asr_model.transcribe_file('/home/soorya/Desktop/speech/FYP/backend/audio.wav')
+        # print(text)
 
-        # text = query('F:/audio.mp3')['text']
+        text += query('audio.wav')['text']
 
         text = clean_text(text)
 
@@ -148,3 +151,5 @@ def execute_code():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+

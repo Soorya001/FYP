@@ -5,6 +5,7 @@ import math
 
 forPossibilities = ["iterate", "for", "loop", "traverse", "traverses"]
 declarationPossibilites = ["declare", "initialize", "variable"]
+outputPossibilites = ["print", "show", "output"]
 
 
 def extract_keywords(str, language, indentation):
@@ -38,15 +39,30 @@ def extract_keywords(str, language, indentation):
             return ((python.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
         elif (language == "cpp"):
             return ((cpp.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
+        
+    elif any(phrase in strList for phrase in outputPossibilites):
+        res = re.search('print (.*)', str)
+        content = res.group(1).strip()
+
+        if (language == "python"):
+            return ((python.print(content)), indentation)
+        elif (language == "cpp"):
+            return ((cpp.print(content)), indentation)
+
+
 
     elif ("include" in str) or ("Include" in str):              # Header Files
         res = re.search('file (.*)', str)
-        fileName = res.group(1).strip()
 
-        if (language == "python"):
-            return ((python.headerFile(fileName)), indentation)
-        elif (language == "cpp"):
-            return ((cpp.headerFile(fileName)), indentation)
+        if (res == None or len(res) <= 1) and language == "cpp":
+            return (("# include <iostream>\n# include <string.h>\n"), indentation)
+
+        else:
+            fileName = res.group(1).strip()
+            if (language == "python"):
+                return ((python.headerFile(fileName)), indentation)
+            elif (language == "cpp"):
+                return ((cpp.headerFile(fileName)), indentation)
 
     # Open and close Brackets - { } - Blocks
     elif ("block" in str) or ("Block" in str):

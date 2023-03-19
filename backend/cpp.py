@@ -1,3 +1,5 @@
+import re
+
 dataTypesAvailable = {'character': 'char', 'boolean': 'bool', 'integer': 'int', 'float': 'float',
                       'decimal': 'decimal', 'string': 'string', 'void': 'void'}  # Primitive data types only
 
@@ -44,3 +46,12 @@ def createFunction(functionName, returnType, arguments):
     # print(len(argumentsString))
 
     return f"{returnType} {functionName}({argumentsString})\n"
+
+
+def print(content):
+    if "string" in content:
+        res = re.search('string (.*)', content)
+        content = res.group(1).strip()
+        content = f' "{content}"'
+    
+    return f"cout<<({content});\n"

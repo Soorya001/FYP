@@ -1,3 +1,5 @@
+import re
+
 def for_function(varName, start, end, step):
     startNo = int(start)
     endNo = int(end)
@@ -41,3 +43,11 @@ def createFunction(functionName, returnType, arguments):
         # print("argument string is:"+argumentsString)
 
     return f"def {functionName}( {argumentsString}):\n"
+
+
+def print(content):
+    if "string" in content:
+        res = re.search('string (.*)', content)
+        content = res.group(1).strip()
+        content = f' "{content}"'
+    return f"print({content})\n"
