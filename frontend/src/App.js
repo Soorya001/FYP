@@ -6,10 +6,10 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import MicRecorder from 'mic-recorder-to-mp3';
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
-
+let initialString = "Hello World!";
 function App() {
 
-  var [code, setCode] = useState('hello world!');
+  var [code, setCode] = useState(initialString);
   var [output, setOutput] = useState('output');
   var [ind, setInd] = useState(parseInt(0));
   var [resp, setResp] = useState({});
@@ -164,7 +164,20 @@ function App() {
 
 
   const acceptCode = () => {
-    code == "hello world!" ? setCode(newCode) : setCode(code + newCode);
+    // code == "hello world!" ? setCode(newCode) : setCode(code + newCode);
+    if(code === initialString)
+      setCode("");
+    setCode(prevValue => prevValue + newCode[0]);
+    
+    let i = 0;
+    const intervalId = setInterval(() => {
+      setCode(prevValue => prevValue + newCode.substring(i, i + 1));
+      i++;
+      if (i === newCode.length) {
+        clearInterval(intervalId);
+      }
+    }, 65);
+
     setDisplayText("");
   }
 

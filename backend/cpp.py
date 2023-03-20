@@ -42,8 +42,6 @@ def createFunction(functionName, returnType, arguments):
     if (len(argumentsString) > 2):
         argumentsString = argumentsString[3:]
 
-    print("Final string:"+argumentsString)
-    # print(len(argumentsString))
 
     return f"{returnType} {functionName}({argumentsString})\n"
 
