@@ -10,11 +10,11 @@ assignPossibilities = ["assign", "set"]
 
 
 def extract_keywords(str, language, indentation):
-    varName = ""
-    rangeStart = ""
-    rangeEnd = ""
-    stepCount = ""
-
+    varName=""
+    rangeStart=""
+    rangeEnd=""
+    stepCount=""
+    str = str.lower()
     # Splits the string into list of individual word
     strList = str.split()
 
@@ -71,7 +71,7 @@ def extract_keywords(str, language, indentation):
         res = re.search('file (.*)', str)
 
         if (res == None or len(res) <= 1) and language == "cpp":
-            return (("# include <iostream>\n# include <string.h>\n"), indentation)
+            return (("#include<iostream>\n#include<string.h>\nusing namespace std;\n"), indentation)
 
         else:
             fileName = res.group(1).strip()
@@ -110,7 +110,7 @@ def extract_keywords(str, language, indentation):
     elif any(phrase in strList for phrase in declarationPossibilities):
         varValue = ""
         dataType = ""
-        str = str.lower()
+        
 
         # Format - "{any of the declarationPossibilities}... {dataType} variable {variableName}.... {value}"
         varNameIndex = strList.index("variable")
@@ -139,14 +139,23 @@ def extract_keywords(str, language, indentation):
         elif (language == "python"):
             return (python.createFunction(functionName, returnType, arguments), indentation)
 
-    elif (("function" in str) or ("Function" in str)):
-        res = re.search('function' + '(.*)' + 'type', str)
-        functionName = res.group(1).strip()
+            
+    elif ( ("function" in str) or ("Function" in str)):
+        functionNameIndex = strList.index("function")
+        returnTypeIndex = strList.index("type")
+        parametersIndex = strList.index("parameters")
 
-        res = re.search('type' + '(.*)' + 'parameters', str)
-        returnType = res.group(1).strip()
-
-        res = re.search('parameters (.*)', str)
+        if( ( functionNameIndex + 1 ) < len(strList) ):
+            functionName = strList[ functionNameIndex + 1 ]
+        else:
+            functionName = ""
+        
+        if( ( returnTypeIndex + 1 ) < len(strList)):
+            returnType = strList[ returnTypeIndex + 1 ]
+        else:
+            returnType = ""
+        
+        res = re.search('parameters (.*)',str)
         argumentGroup = res.group(1).strip()
 
         # print("Function name:"+functionName+"Return Type:"+returnType+"PArameters:"+arguments)
