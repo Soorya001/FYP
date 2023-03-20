@@ -4,8 +4,9 @@ import python
 import math
 
 forPossibilities = ["iterate", "for", "loop", "traverse", "traverses"]
-declarationPossibilites = ["declare", "initialize", "variable"]
-outputPossibilites = ["print", "show", "output"]
+declarationPossibilities = ["declare", "initialize", "variable"]
+outputPossibilities = ["print", "show", "output"]
+assignPossibilities = ["assign", "set"]
 
 
 def extract_keywords(str, language, indentation):
@@ -40,7 +41,7 @@ def extract_keywords(str, language, indentation):
         elif (language == "cpp"):
             return ((cpp.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
         
-    elif any(phrase in strList for phrase in outputPossibilites):
+    elif any(phrase in strList for phrase in outputPossibilities):
         res = re.search('print (.*)', str)
         content = res.group(1).strip()
 
@@ -48,6 +49,21 @@ def extract_keywords(str, language, indentation):
             return ((python.print(content)), indentation)
         elif (language == "cpp"):
             return ((cpp.print(content)), indentation)
+
+    # assign variable a value 10
+    elif any(phrase in strList for phrase in assignPossibilities):
+
+        res = re.search('variable (.*) value', str)
+        varName = res.group(1).strip()
+
+        res = re.search('value (.*)', str)
+        varValue = res.group(1).strip()
+
+        if (language == "python"):
+            return (f"{varName} = {varValue}\n", indentation)
+        elif (language == "cpp"):
+            return (f"{varName} = {varValue};\n", indentation)
+        
 
 
 
@@ -91,7 +107,7 @@ def extract_keywords(str, language, indentation):
             return (")", indentation)
 
     # Declaration Statements
-    elif any(phrase in strList for phrase in declarationPossibilites):
+    elif any(phrase in strList for phrase in declarationPossibilities):
         varValue = ""
         dataType = ""
         str = str.lower()
