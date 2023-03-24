@@ -46,10 +46,19 @@ def createFunction(functionName, returnType, arguments):
     return f"{returnType} {functionName}({argumentsString})\n"
 
 
-def print(content):
+def printStatement(content):
     if "string" in content:
         res = re.search('string (.*)', content)
         content = res.group(1).strip()
-        content = f' "{content}"'
+        content = f' "{content} " '
     
     return f"cout<<({content});\n"
+
+def functionCall(functionName, parameters):
+    if parameters == "":
+        return f"{functionName}();\n"
+    else:
+        s = ",".join(parameters)
+        return f"{functionName}(" + s + ");\n"
+    
+

@@ -7,6 +7,8 @@ forPossibilities = ["iterate", "for", "loop", "traverse", "traverses"]
 declarationPossibilities = ["declare", "initialize", "variable"]
 outputPossibilities = ["print", "show", "output"]
 assignPossibilities = ["assign", "set"]
+functionCallPossibilities = ["invoke","call"]
+functionCallArgumentPossibilities = ["parameter","parameters","argument","arguments"]
 
 
 def extract_keywords(str, language, indentation):
@@ -46,9 +48,9 @@ def extract_keywords(str, language, indentation):
         content = res.group(1).strip()
 
         if (language == "python"):
-            return ((python.print(content)), indentation)
+            return ((python.printStatement(content)), indentation)
         elif (language == "cpp"):
-            return ((cpp.print(content)), indentation)
+            return ((cpp.printStatement(content)), indentation)
 
     # assign variable a value 10
     elif any(phrase in strList for phrase in assignPossibilities):
@@ -139,6 +141,43 @@ def extract_keywords(str, language, indentation):
         elif (language == "python"):
             return (python.createFunction(functionName, returnType, arguments), indentation)
 
+    elif any(phrase in strList for phrase in functionCallPossibilities):
+        functionName = ""
+        functionNameIndex = -1
+        parametersIndex = -1
+        arguments = []
+
+        try:
+            functionNameIndex = strList.index("function")
+        except Exception as e:
+            return ("",indentation)
+        
+        if( ( functionNameIndex + 1 ) < len(strList) ):
+            functionName = strList[ functionNameIndex + 1 ]
+
+        for functionCallArgumentPossibility in functionCallArgumentPossibilities:
+            if functionCallArgumentPossibility in strList:
+                parametersIndex = strList.index(functionCallArgumentPossibility)
+                break
+
+        if parametersIndex == -1:
+            if (language == "cpp"):
+                return (cpp.functionCall(functionName,arguments), indentation)
+            elif (language == "python"):
+                return (python.functionCall(functionName,arguments), indentation)
+            
+        else:
+            res = re.search(f'{strList[parametersIndex]} (.*)',str)
+            argumentGroup = res.group(1).strip()
+
+            arguments = argumentGroup.split("and")
+            arguments = [e.strip() for e in arguments]
+            print("Funciton name : ",functionName)
+            print("Arguments are : ",arguments)
+            if (language == "cpp"):
+                return (cpp.functionCall(functionName,arguments), indentation)
+            elif (language == "python"):
+                return (python.functionCall(functionName,arguments), indentation)
             
     elif ( ("function" in str) or ("Function" in str)):
         functionNameIndex = strList.index("function")
