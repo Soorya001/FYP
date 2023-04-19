@@ -1,5 +1,6 @@
 import cpp
 import re
+import java
 import python
 import math
 
@@ -42,6 +43,8 @@ def extract_keywords(str, language, indentation):
             return ((python.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
         elif (language == "cpp"):
             return ((cpp.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
+        elif (language == "java"):
+            return ((java.for_function(varName, rangeStart, rangeEnd, stepCount)), indentation)
         
     elif any(phrase in strList for phrase in outputPossibilities):
         res = re.search('print (.*)', str)
@@ -51,6 +54,9 @@ def extract_keywords(str, language, indentation):
             return ((python.printStatement(content)), indentation)
         elif (language == "cpp"):
             return ((cpp.printStatement(content)), indentation)
+        elif (language == "java"):
+            return ((java.printStatement(content)), indentation)
+        
 
     # assign variable a value 10
     elif any(phrase in strList for phrase in assignPossibilities):
@@ -84,7 +90,7 @@ def extract_keywords(str, language, indentation):
 
     # Open and close Brackets - { } - Blocks
     elif ("block" in str) or ("Block" in str):
-        if language == "cpp":
+        if language == "cpp" or language == "java":
             if ("open" in str) or ("Open" in str):
                 return ("{\n", indentation)
 
@@ -130,6 +136,8 @@ def extract_keywords(str, language, indentation):
             return ((python.declaration(varName, dataType, varValue)), indentation)
         elif (language == "cpp"):
             return ((cpp.declaration(varName, dataType, varValue)), indentation)
+        elif (language == "java"):
+            return ((java.declaration(varName, dataType, varValue)), indentation)
 
     elif ("main" in str):
         functionName = "main"
@@ -140,6 +148,8 @@ def extract_keywords(str, language, indentation):
             return (cpp.createFunction(functionName, returnType, arguments), indentation)
         elif (language == "python"):
             return (python.createFunction(functionName, returnType, arguments), indentation)
+        elif (language == "java"):
+            return ("public static void main(String[] args)", indentation)
 
     elif any(phrase in strList for phrase in functionCallPossibilities):
         functionName = ""
@@ -215,6 +225,18 @@ def extract_keywords(str, language, indentation):
             return (cpp.createFunction(functionName, returnType, arguments), indentation)
         elif (language == "python"):
             return (python.createFunction(functionName, returnType, arguments), indentation)
+        elif (language == "java"):
+            return (java.createFunction(functionName, returnType, arguments), indentation)
+        
+    
+    elif "class" in strList:
+        classNameIndex = strList.index("class")
+        className = "undefined"
+        if(classNameIndex + 1 < len(strList)):
+            className = strList[classNameIndex + 1]
+        # print("Class NAME iS : ", className)
+        return (java.create_class(className), indentation)
 
     else:                           # For testing purposes. I can give print statments to see the output. Should remove later
         return (str+"\n", indentation)
+    

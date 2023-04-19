@@ -69,7 +69,8 @@ function App() {
       var lang2;
       if (lang == "cpp")
         lang2 = "cpp"
-
+      else if(lang == "java")
+        lang2 = "java"
       else
         lang2 = "py"
 
