@@ -175,6 +175,8 @@ def extract_keywords(str, language, indentation):
                 return (cpp.functionCall(functionName,arguments), indentation)
             elif (language == "python"):
                 return (python.functionCall(functionName,arguments), indentation)
+            elif (language == "java"):
+                return (java.functionCall(functionName,arguments), indentation)
             
         else:
             res = re.search(f'{strList[parametersIndex]} (.*)',str)

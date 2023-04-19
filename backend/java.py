@@ -41,7 +41,7 @@ def createFunction(functionName, returnType, arguments):
         argumentsString = argumentsString[3:]
 
 
-    return f"{returnType} {functionName}({argumentsString})\n"
+    return f"static {returnType} {functionName}({argumentsString})\n"
 
 def printStatement(content):
     if "string" in content:
