@@ -10,6 +10,7 @@ import sys
 import requests
 import time
 from pydub import AudioSegment
+import openai, os
 
 API_TOKEN = "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"
 API_URL = "https://api-inference.huggingface.co/models/openai/whisper-medium"
@@ -108,6 +109,27 @@ def acceptString():
     # string is the key name of the identified string
     # language - lang to be converted to.
     # POST request must contain the following- { stringtoSend, ProgLanguage}
+
+
+    if stringReceived[:2] == "%%":
+
+        openai.api_key = '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'
+
+        response = openai.Completion.create(
+        model="text-curie-001",
+        prompt=stringReceived[2:] + f"in {language}",
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
+
+        output = ""
+        output += response.choices[0].text
+
+        return json.dumps({"code": output, "indentation": indentation})
+
 
     print('data received: ', stringReceived, ' language: ',
           language, ' current indentation: ', indentation)

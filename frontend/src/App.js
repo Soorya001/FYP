@@ -132,6 +132,7 @@ function App() {
     console.log("setting diplay text");
   }
 
+  
   const sendAudio = async () => {
 
     console.log('sending audio to backend')
