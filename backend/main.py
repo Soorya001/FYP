@@ -11,8 +11,10 @@ import requests
 import time
 from pydub import AudioSegment
 import openai, os
+from dotenv import load_dotenv
 
-API_TOKEN = "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"
+load_dotenv()
+API_TOKEN = os.getenv('api_key')
 API_URL = "https://api-inference.huggingface.co/models/openai/whisper-medium"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
